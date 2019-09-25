@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        webView.setWebChromeClient(new WebChromeClient(){
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-
-        });
+//        webView.setWebChromeClient(new WebChromeClient(){
+//            @Override
+//            public void onProgressChanged(WebView view, int newProgress) {
+//                swipeRefreshLayout.setRefreshing(true);
+//            }
+//
+//        });
 
         webView.setWebViewClient(new WebViewClient(){
             @Override
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(webView, url);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
