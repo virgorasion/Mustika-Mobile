@@ -42,33 +42,37 @@ public class MainActivity extends AppCompatActivity{
         swipeRefreshLayout = findViewById(R.id.refresh);
         webView = findViewById(R.id.webView);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                Log.d("Permission", "Permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
-                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissions, 1);
-            }
-        }
-
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
-                DownloadManager.Request request = new DownloadManager.Request(
-                        Uri.parse(url));
-                request.setMimeType(mimeType);
-                String cookies = CookieManager.getInstance().getCookie(url);
-                request.addRequestHeader("cookie", cookies);
-                request.addRequestHeader("User-Agent", userAgent);
-                request.setDescription("Downloading File...");
-                request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(
-                        Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(
-                                url, contentDisposition, mimeType));
-                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                dm.enqueue(request);
-                Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                        DownloadManager.Request request = new DownloadManager.Request(
+                                Uri.parse(url));
+                        request.setMimeType(mimeType);
+                        String cookies = CookieManager.getInstance().getCookie(url);
+                        request.addRequestHeader("cookie", cookies);
+                        request.addRequestHeader("User-Agent", userAgent);
+                        request.setDescription("Downloading File...");
+                        request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
+                        request.allowScanningByMediaScanner();
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(
+                                Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(
+                                        url, contentDisposition, mimeType));
+                        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                        dm.enqueue(request);
+                        Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Izinkan Akses Download !", Toast.LENGTH_LONG).show();
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+                            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+                                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                                requestPermissions(permissions, 1);
+                            }
+                        }
+                    }
+                }
             }
         });
 
